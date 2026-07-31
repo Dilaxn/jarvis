@@ -1,0 +1,55 @@
+# Automatic HTTPS for every site below (Let's Encrypt, auto-renewed).
+# Replace example.com with real domains. Container names resolve on the compose network.
+
+{
+	email you@example.com
+}
+
+(common) {
+	encode zstd gzip
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 20mb
+			roll_keep 5
+		}
+		format json
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+	}
+}
+
+lankanews.example.com {
+	import common
+	reverse_proxy lanka-news:3001
+}
+
+invite.example.com {
+	import common
+	reverse_proxy invitation:3002
+}
+
+pms.example.com {
+	import common
+	reverse_proxy pms:3003
+}
+
+prince.example.com {
+	import common
+	reverse_proxy prince:3004
+}
+
+webpulse.example.com {
+	import common
+	reverse_proxy webpulse:3005
+}
+
+# Management dashboard: extra network-level lock on top of app login.
+ops.example.com {
+	import common
+	@notme not remote_ip 203.0.113.10/32   # <- your home/office IP(s); update as needed
+	respond @notme "Forbidden" 403
+	reverse_proxy dashboard:3000
+}

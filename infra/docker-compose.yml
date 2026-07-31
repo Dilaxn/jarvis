@@ -1,0 +1,135 @@
+# /opt/paas/docker-compose.yml — the entire server topology.
+# Rules: only caddy publishes ports; every service has restart policy,
+# log rotation, healthcheck, and a pinned ghcr.io image (SHA tag in prod).
+
+x-logging: &default-logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+x-app-defaults: &app-defaults
+  restart: unless-stopped
+  logging: *default-logging
+  networks: [paas]
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - paas_caddy_data:/data
+      - paas_caddy_config:/config
+      - paas_caddy_logs:/var/log/caddy
+    networks: [paas]
+
+  # Least-privilege gateway to the Docker socket for the dashboard.
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      CONTAINERS: 1        # list/inspect/logs/stats
+      POST: 1              # allow start/stop/restart
+      IMAGES: 1
+      EXEC: 0
+      VOLUMES: 0
+      NETWORKS: 0
+      INFO: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [paas]
+
+  dashboard:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/paas-dashboard:latest
+    container_name: paas-dashboard
+    env_file: /opt/paas/env/dashboard.env    # SESSION_SECRET, WEBHOOK_SECRET, GITHUB_PAT
+    environment:
+      DOCKER_HOST: tcp://socket-proxy:2375
+      DATABASE_PATH: /data/dashboard.db
+    volumes:
+      - paas_dashboard_data:/data
+      - paas_caddy_logs:/hostlogs/caddy:ro
+      - /proc:/host/proc:ro                  # host CPU/RAM readings
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  lanka-news:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/lanka-news:latest
+    container_name: paas-lanka-news
+    env_file: /opt/paas/env/lanka-news.env
+    volumes: [paas_lanka_news_data:/data]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  invitation:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/invitation:latest
+    container_name: paas-invitation
+    env_file: /opt/paas/env/invitation.env
+    volumes: [paas_invitation_data:/data]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  pms:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/pms:latest
+    container_name: paas-pms
+    env_file: /opt/paas/env/pms.env
+    volumes: [paas_pms_data:/data]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3003/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  prince:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/prince:latest
+    container_name: paas-prince
+    env_file: /opt/paas/env/prince.env
+    volumes: [paas_prince_data:/data]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  webpulse:
+    <<: *app-defaults
+    image: ghcr.io/OWNER/webpulse:latest
+    container_name: paas-webpulse
+    env_file: /opt/paas/env/webpulse.env
+    volumes: [paas_webpulse_data:/data]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3005/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  paas:
+    driver: bridge
+
+volumes:
+  paas_caddy_data:
+  paas_caddy_config:
+  paas_caddy_logs:
+  paas_dashboard_data:
+  paas_lanka_news_data:
+  paas_invitation_data:
+  paas_pms_data:
+  paas_prince_data:
+  paas_webpulse_data:
