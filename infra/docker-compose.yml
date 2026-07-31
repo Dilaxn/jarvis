@@ -41,6 +41,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks: [paas]
 
+  # Shared MySQL — used by lanka-news
+  mysql:
+    <<: *app-defaults
+    image: mysql:8.0
+    container_name: paas-mysql
+    env_file: /opt/paas/env/mysql.env    # MYSQL_ROOT_PASSWORD, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
+    volumes:
+      - paas_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Shared PostgreSQL — used by invitation (and future apps that need Postgres)
   postgres:
     <<: *app-defaults
@@ -75,14 +89,16 @@ services:
 
   lanka-news:
     <<: *app-defaults
-    image: ghcr.io/OWNER/lanka-news:latest
+    image: ghcr.io/dilaxn/lanka-news:latest
     container_name: paas-lanka-news
     env_file: /opt/paas/env/lanka-news.env
-    volumes: [paas_lanka_news_data:/data]
+    depends_on:
+      mysql:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
 
   invitation:
@@ -145,6 +161,7 @@ volumes:
   paas_caddy_logs:
   paas_dashboard_data:
   paas_lanka_news_data:
+  paas_mysql_data:
   paas_postgres_data:
   paas_invitation_data:
   paas_pms_data:
