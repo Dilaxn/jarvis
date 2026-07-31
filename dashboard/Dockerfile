@@ -23,7 +23,7 @@ RUN apk add --no-cache sqlite
 # Copy standalone build
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/public ./public 2>/dev/null || true
+RUN mkdir -p .next/static public
 
 # Schema needed for first-boot DB init
 COPY --from=builder /app/schema.sql ./
