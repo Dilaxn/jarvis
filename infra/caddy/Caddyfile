@@ -1,8 +1,7 @@
 # Automatic HTTPS for every site below (Let's Encrypt, auto-renewed).
-# Replace example.com with real domains. Container names resolve on the compose network.
 
 {
-	email you@example.com
+	email admin@dilax.space
 }
 
 (common) {
@@ -21,35 +20,35 @@
 	}
 }
 
-lankanews.example.com {
+lankanews.dilax.space {
 	import common
 	reverse_proxy lanka-news:3001
 }
 
-invite.example.com {
+invite.dilax.space {
 	import common
 	reverse_proxy invitation:3002
 }
 
-pms.example.com {
+pms.dilax.space {
 	import common
 	reverse_proxy pms:3003
 }
 
-prince.example.com {
+prince.dilax.space {
 	import common
 	reverse_proxy prince:3004
 }
 
-webpulse.example.com {
+webpulse.dilax.space {
 	import common
 	reverse_proxy webpulse:3005
 }
 
-# Management dashboard: extra network-level lock on top of app login.
-ops.example.com {
+# Management dashboard — no IP lock for now, protected by login only.
+# Add: @notme not remote_ip YOUR_HOME_IP/32 + respond @notme "Forbidden" 403
+# once you know your static home IP.
+ops.dilax.space {
 	import common
-	@notme not remote_ip 203.0.113.10/32   # <- your home/office IP(s); update as needed
-	respond @notme "Forbidden" 403
 	reverse_proxy dashboard:3000
 }
