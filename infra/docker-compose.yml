@@ -41,6 +41,33 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks: [paas]
 
+  # Redis — used by pms (BullMQ workers)
+  redis:
+    <<: *app-defaults
+    image: redis:7-alpine
+    container_name: paas-redis
+    volumes:
+      - paas_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB — used by webpulse
+  mongodb:
+    <<: *app-defaults
+    image: mongo:7.0
+    container_name: paas-mongodb
+    env_file: /opt/paas/env/mongodb.env   # MONGO_INITDB_ROOT_USERNAME, MONGO_INITDB_ROOT_PASSWORD
+    volumes:
+      - paas_mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Shared MySQL — used by lanka-news
   mysql:
     <<: *app-defaults
@@ -117,38 +144,52 @@ services:
 
   pms:
     <<: *app-defaults
-    image: ghcr.io/OWNER/pms:latest
+    image: ghcr.io/dilaxn/pms:latest
     container_name: paas-pms
     env_file: /opt/paas/env/pms.env
-    volumes: [paas_pms_data:/data]
+    environment:
+      PORT: 3003
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3003/health"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
 
   prince:
     <<: *app-defaults
-    image: ghcr.io/OWNER/prince:latest
+    image: ghcr.io/dilaxn/prince:latest
     container_name: paas-prince
     env_file: /opt/paas/env/prince.env
-    volumes: [paas_prince_data:/data]
+    environment:
+      PORT: 3004
+    depends_on:
+      mysql:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3004/health"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
 
   webpulse:
     <<: *app-defaults
-    image: ghcr.io/OWNER/webpulse:latest
+    image: ghcr.io/dilaxn/webpulse:latest
     container_name: paas-webpulse
     env_file: /opt/paas/env/webpulse.env
-    volumes: [paas_webpulse_data:/data]
+    environment:
+      PORT: 3005
+    depends_on:
+      mongodb:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3005/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3005/api/health"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
 
 networks:
@@ -161,6 +202,8 @@ volumes:
   paas_caddy_logs:
   paas_dashboard_data:
   paas_lanka_news_data:
+  paas_redis_data:
+  paas_mongodb_data:
   paas_mysql_data:
   paas_postgres_data:
   paas_invitation_data:
