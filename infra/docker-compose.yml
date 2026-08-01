@@ -104,6 +104,7 @@ services:
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
       DATABASE_PATH: /data/dashboard.db
+      HOSTNAME: "0.0.0.0"
     volumes:
       - paas_dashboard_data:/data
       - paas_caddy_logs:/hostlogs/caddy:ro
