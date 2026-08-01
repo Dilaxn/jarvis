@@ -1,7 +1,7 @@
 #!/bin/bash
 # Nightly backup: all paas_* volumes + env files -> S3 (lifecycle handles Glacier/expiry).
 set -euo pipefail
-BUCKET="s3://YOUR-PAAS-BACKUP-BUCKET"
+BUCKET="s3://dilaxn-paas-backups"
 STAMP=$(date +%F)
 TMP=$(mktemp -d)
 
