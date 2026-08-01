@@ -24,6 +24,24 @@ export async function initDb() {
   if (count === 0) {
     seedApplications(db)
     console.log('[JARVIS] Applications seeded')
+  } else {
+    // Sync domains from env vars if set (handles re-deploys after env update)
+    syncDomains(db)
+  }
+}
+
+function syncDomains(db: ReturnType<typeof import('./db').getDb>) {
+  const domainMap: Record<string, string | undefined> = {
+    dashboard:  process.env.DASHBOARD_DOMAIN,
+    'lanka-news': process.env.LANKA_NEWS_DOMAIN,
+    invitation: process.env.INVITATION_DOMAIN,
+    pms:        process.env.PMS_DOMAIN,
+    prince:     process.env.PRINCE_DOMAIN,
+    webpulse:   process.env.WEBPULSE_DOMAIN,
+  }
+  const update = db.prepare('UPDATE applications SET domain=? WHERE name=? AND domain!=?')
+  for (const [name, domain] of Object.entries(domainMap)) {
+    if (domain) update.run(domain, name, domain)
   }
 }
 
