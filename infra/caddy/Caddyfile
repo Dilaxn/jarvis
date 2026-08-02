@@ -20,9 +20,19 @@
 	}
 }
 
+lankanews.click, www.lankanews.click {
+	import common
+	reverse_proxy lanka-news:3001
+}
+
 lankanews.dilax.space {
 	import common
 	reverse_proxy lanka-news:3001
+}
+
+invitebloom.online, www.invitebloom.online {
+	import common
+	reverse_proxy invitation:3002
 }
 
 invite.dilax.space {

@@ -17,8 +17,8 @@ suggestion must be justified against that budget. When in doubt: simpler and che
 
 | App        | Local path                  | Traffic      | Domain (planned)        | Port |
 |------------|-----------------------------|--------------|-------------------------|------|
-| lanka-news | ~/Learning/news/lanka-news  | ≤1000/day    | lankanews.example.com   | 3001 |
-| invitation | ~/CodeBase/invitation       | ≤10 users/d  | invite.example.com      | 3002 |
+| lanka-news | ~/Learning/news/lanka-news  | ≤1000/day    | lankanews.click         | 3001 |
+| invitation | ~/CodeBase/invitation       | ≤10 users/d  | invitebloom.online      | 3002 |
 | pms        | ~/Learning/pms              | dev only     | pms.example.com         | 3003 |
 | prince     | ~/Learning/Prince           | ≤2 users/d   | prince.example.com      | 3004 |
 | webpulse   | ~/Learning/WebPulse         | ≤5 users/d   | webpulse.example.com    | 3005 |
