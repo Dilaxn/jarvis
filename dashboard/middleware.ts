@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { sessionOptions, type SessionData } from '@/lib/session'
 
-const PUBLIC = ['/login', '/api/auth/', '/api/healthz']
+const PUBLIC = ['/login', '/api/auth/', '/api/healthz', '/api/hooks/']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl

@@ -72,6 +72,14 @@ jobs:
             docker image prune -f
             echo "Dashboard deployed: ${{ github.sha }}"
 
+      - name: Record deployment
+        if: always()
+        run: |
+          curl -sf -X POST https://ops.dilax.space/api/hooks/deployment \
+            -H "Content-Type: application/json" \
+            -H "x-webhook-secret: ${{ secrets.WEBHOOK_SECRET }}" \
+            -d "{\"app\":\"dashboard\",\"sha\":\"${{ github.sha }}\",\"status\":\"${{ job.status == 'success' && 'success' || 'failed' }}\",\"actor\":\"${{ github.actor }}\",\"runUrl\":\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" || true
+
       - name: Close SSH for runner
         if: always()
         run: |
