@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -54,12 +55,9 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-sm px-4">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border-2 border-cyan-500/50 mb-4"
-               style={{ boxShadow: '0 0 30px rgba(6,182,212,0.3)' }}>
-            <svg className="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
+               style={{ boxShadow: '0 0 40px rgba(6,182,212,0.25)' }}>
+            <Image src="/jarvis-transparent.png" alt="JARVIS" width={80} height={80} priority />
           </div>
           <h1 className="text-3xl font-bold tracking-[0.3em] text-cyan-400 glow-cyan">
             J.A.R.V.I.S

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 
 const navItems = [
@@ -78,13 +79,8 @@ export default function Sidebar({ username }: { username?: string }) {
       {/* Logo */}
       <div className="px-5 py-5 border-b border-cyan-900/20">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded border border-cyan-500/40 flex items-center justify-center"
-               style={{ boxShadow: '0 0 10px rgba(6,182,212,0.2)' }}>
-            <svg className="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clipRule="evenodd" />
-            </svg>
+          <div className="w-7 h-7 flex items-center justify-center">
+            <Image src="/jarvis-transparent.png" alt="JARVIS" width={28} height={28} />
           </div>
           <div>
             <p className="text-cyan-400 font-bold text-sm tracking-widest">JARVIS</p>
