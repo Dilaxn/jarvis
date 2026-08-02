@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -65,6 +66,7 @@ const navItems = [
 export default function Sidebar({ username }: { username?: string }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [open, setOpen] = useState(false)
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -72,75 +74,122 @@ export default function Sidebar({ username }: { username?: string }) {
   }
 
   return (
-    <aside
-      className="fixed left-0 top-0 h-full w-56 flex flex-col border-r border-cyan-900/20"
-      style={{ background: '#0b1020' }}
-    >
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-cyan-900/20">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 flex items-center justify-center">
-            <Image src="/jarvis-transparent.png" alt="JARVIS" width={28} height={28} />
-          </div>
-          <div>
-            <p className="text-cyan-400 font-bold text-sm tracking-widest">JARVIS</p>
-            <p className="text-slate-600 text-xs">PaaS Control</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const isActive = item.active && pathname === item.href
-          const isDisabled = !item.active
-
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
-                isActive
-                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                  : isDisabled
-                  ? 'text-slate-700 cursor-not-allowed pointer-events-none'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-              }`}
-            >
-              {item.icon}
-              <span className="tracking-wide">{item.label}</span>
-              {isDisabled && (
-                <span className="ml-auto text-xs text-slate-700 border border-slate-800 rounded px-1">
-                  soon
-                </span>
-              )}
-            </Link>
-          )
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="px-3 py-4 border-t border-cyan-900/20">
-        <div className="flex items-center gap-2 px-3 py-2 mb-2">
-          <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
-            <span className="text-cyan-400 text-xs font-bold uppercase">
-              {username?.[0] ?? 'A'}
-            </span>
-          </div>
-          <span className="text-slate-400 text-xs">{username ?? 'admin'}</span>
-          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        </div>
+    <>
+      {/* Mobile top bar */}
+      <div
+        className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center px-4 border-b border-cyan-900/20"
+        style={{ background: '#0b1020' }}
+      >
         <button
-          onClick={logout}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-500 hover:text-red-400 hover:bg-red-900/10 rounded transition-colors"
+          onClick={() => setOpen(true)}
+          className="text-slate-400 hover:text-cyan-400 p-1 mr-3"
+          aria-label="Open menu"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          DISCONNECT
         </button>
+        <div className="flex items-center gap-2">
+          <Image src="/jarvis-transparent.png" alt="JARVIS" width={22} height={22} />
+          <span className="text-cyan-400 font-bold text-sm tracking-widest">JARVIS</span>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-slate-500 text-xs">{username ?? 'admin'}</span>
+        </div>
       </div>
-    </aside>
+
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* Sidebar drawer */}
+      <aside
+        className={`fixed left-0 top-0 h-full w-56 flex flex-col border-r border-cyan-900/20 z-50 transition-transform duration-200 ease-in-out
+          ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        style={{ background: '#0b1020' }}
+      >
+        {/* Logo */}
+        <div className="px-5 py-5 border-b border-cyan-900/20 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 flex items-center justify-center">
+              <Image src="/jarvis-transparent.png" alt="JARVIS" width={28} height={28} />
+            </div>
+            <div>
+              <p className="text-cyan-400 font-bold text-sm tracking-widest">JARVIS</p>
+              <p className="text-slate-600 text-xs">PaaS Control</p>
+            </div>
+          </div>
+          {/* Close button — mobile only */}
+          <button
+            onClick={() => setOpen(false)}
+            className="md:hidden text-slate-600 hover:text-slate-300 p-1"
+            aria-label="Close menu"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-1">
+          {navItems.map((item) => {
+            const isActive = item.active && pathname === item.href
+            const isDisabled = !item.active
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
+                  isActive
+                    ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                    : isDisabled
+                    ? 'text-slate-700 cursor-not-allowed pointer-events-none'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                }`}
+              >
+                {item.icon}
+                <span className="tracking-wide">{item.label}</span>
+                {isDisabled && (
+                  <span className="ml-auto text-xs text-slate-700 border border-slate-800 rounded px-1">
+                    soon
+                  </span>
+                )}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-3 py-4 border-t border-cyan-900/20">
+          <div className="flex items-center gap-2 px-3 py-2 mb-2">
+            <div className="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
+              <span className="text-cyan-400 text-xs font-bold uppercase">
+                {username?.[0] ?? 'A'}
+              </span>
+            </div>
+            <span className="text-slate-400 text-xs">{username ?? 'admin'}</span>
+            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          </div>
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-500 hover:text-red-400 hover:bg-red-900/10 rounded transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            DISCONNECT
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }

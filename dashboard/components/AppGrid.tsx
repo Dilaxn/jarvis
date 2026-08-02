@@ -48,7 +48,7 @@ export default function AppGrid() {
   return (
     <div>
       {/* Status bar */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
             <span className="text-emerald-400 font-bold text-sm">{running}</span>
@@ -60,7 +60,7 @@ export default function AppGrid() {
         </div>
         <div className="flex items-center gap-3">
           {lastRefresh && (
-            <span className="text-xs text-slate-600 font-mono">
+            <span className="text-xs text-slate-600 font-mono hidden sm:inline">
               Updated {lastRefresh.toLocaleTimeString()}
             </span>
           )}

@@ -49,7 +49,7 @@ export default function LogsPage() {
   return (
     <div className="min-h-screen flex" style={{ background: '#080c14' }}>
       <Sidebar />
-      <main className="flex-1 ml-56 p-8 flex flex-col">
+      <main className="flex-1 md:ml-56 pt-14 md:pt-0 p-4 md:p-8 flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
@@ -60,7 +60,7 @@ export default function LogsPage() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-2 mb-4">
           <select
             value={container}
             onChange={e => setContainer(e.target.value)}

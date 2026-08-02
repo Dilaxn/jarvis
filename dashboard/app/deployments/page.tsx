@@ -55,8 +55,8 @@ export default function DeploymentsPage() {
   return (
     <div className="min-h-screen flex" style={{ background: '#080c14' }}>
       <Sidebar />
-      <main className="flex-1 ml-56 p-8">
-        <div className="mb-8">
+      <main className="flex-1 md:ml-56 pt-14 md:pt-0 p-4 md:p-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-1 h-6 bg-cyan-500 rounded-full" />
             <h1 className="text-xl font-bold text-slate-100 tracking-wide">Deployments</h1>
@@ -80,48 +80,50 @@ export default function DeploymentsPage() {
           )}
 
           {rows.length > 0 && (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-cyan-900/20">
-                  <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">APP</th>
-                  <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">STATUS</th>
-                  <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">SHA</th>
-                  <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">ACTOR</th>
-                  <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">WHEN</th>
-                  <th className="px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map(d => (
-                  <tr key={d.id} className="border-b border-cyan-900/10 hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-3">
-                      <span className="text-slate-200 font-medium">{d.display_name}</span>
-                      <span className="text-slate-600 text-xs ml-2">{d.app_name}</span>
-                    </td>
-                    <td className="px-5 py-3"><StatusBadge status={d.status} /></td>
-                    <td className="px-5 py-3 font-mono text-xs text-slate-400">
-                      {d.git_sha ? d.git_sha.slice(0, 7) : '—'}
-                    </td>
-                    <td className="px-5 py-3 text-xs text-slate-400">
-                      {d.triggered_by?.replace('github:', '') ?? '—'}
-                    </td>
-                    <td className="px-5 py-3 text-xs text-slate-500">{timeAgo(d.created_at)}</td>
-                    <td className="px-5 py-3 text-right">
-                      {d.ci_run_url && (
-                        <a
-                          href={d.ci_run_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-cyan-700 hover:text-cyan-400 font-mono transition-colors"
-                        >
-                          GH →
-                        </a>
-                      )}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-[480px]">
+                <thead>
+                  <tr className="border-b border-cyan-900/20">
+                    <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">APP</th>
+                    <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">STATUS</th>
+                    <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal hidden sm:table-cell">SHA</th>
+                    <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal hidden md:table-cell">ACTOR</th>
+                    <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">WHEN</th>
+                    <th className="px-4 py-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {rows.map(d => (
+                    <tr key={d.id} className="border-b border-cyan-900/10 hover:bg-white/[0.02] transition-colors">
+                      <td className="px-4 py-3">
+                        <span className="text-slate-200 font-medium text-xs">{d.display_name}</span>
+                        <span className="text-slate-600 text-xs ml-1.5 hidden sm:inline">{d.app_name}</span>
+                      </td>
+                      <td className="px-4 py-3"><StatusBadge status={d.status} /></td>
+                      <td className="px-4 py-3 font-mono text-xs text-slate-400 hidden sm:table-cell">
+                        {d.git_sha ? d.git_sha.slice(0, 7) : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-400 hidden md:table-cell">
+                        {d.triggered_by?.replace('github:', '') ?? '—'}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">{timeAgo(d.created_at)}</td>
+                      <td className="px-4 py-3 text-right">
+                        {d.ci_run_url && (
+                          <a
+                            href={d.ci_run_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-cyan-700 hover:text-cyan-400 font-mono transition-colors"
+                          >
+                            GH →
+                          </a>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </main>

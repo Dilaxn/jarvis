@@ -71,9 +71,9 @@ export default function CostsPage() {
     <div className="min-h-screen flex" style={{ background: '#080c14' }}>
       <Sidebar />
 
-      <main className="flex-1 ml-56 p-8">
+      <main className="flex-1 md:ml-56 pt-14 md:pt-0 p-4 md:p-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-1 h-6 bg-cyan-500 rounded-full" />
             <h1 className="text-xl font-bold text-slate-100 tracking-wide">AWS Cost Tracker</h1>
@@ -95,7 +95,7 @@ export default function CostsPage() {
         {data && !data.error && (
           <div className="space-y-4">
             {/* Summary cards */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {[
                 { label: 'Month to Date', value: `$${fmt(data.mtd)}`, sub: 'current spend', color: 'text-cyan-400' },
                 { label: 'Projected Total', value: `$${fmt(monthlyProjection)}`, sub: 'mtd + forecast', color: 'text-violet-400' },

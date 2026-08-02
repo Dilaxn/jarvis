@@ -56,8 +56,8 @@ export default function MetricsPage() {
   return (
     <div className="min-h-screen flex" style={{ background: '#080c14' }}>
       <Sidebar />
-      <main className="flex-1 ml-56 p-8">
-        <div className="mb-8 flex items-end justify-between">
+      <main className="flex-1 md:ml-56 pt-14 md:pt-0 p-4 md:p-8">
+        <div className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
           <div>
             <div className="flex items-center gap-3 mb-1">
               <div className="w-1 h-6 bg-cyan-500 rounded-full" />
@@ -85,7 +85,7 @@ export default function MetricsPage() {
             {/* Host gauges */}
             <div>
               <p className="text-slate-500 text-xs font-mono mb-3">HOST — EC2 t4g.small ({data.host.cpu.cores} vCPU · {fmt(data.host.mem.totalMb)} RAM)</p>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Gauge
                   pct={data.host.cpu.pct}
                   label="CPU LOAD"
@@ -104,38 +104,40 @@ export default function MetricsPage() {
             <div>
               <p className="text-slate-500 text-xs font-mono mb-3">CONTAINERS</p>
               <div className="rounded-lg border border-cyan-900/20 overflow-hidden" style={{ background: '#0b1020' }}>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-cyan-900/20">
-                      <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">CONTAINER</th>
-                      <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">CPU %</th>
-                      <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">MEMORY</th>
-                      <th className="text-left px-5 py-3 text-slate-500 text-xs font-mono font-normal">MEM %</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.containers.map(c => {
-                      const memPct = c.memLimitMb > 0 ? (c.memMb / c.memLimitMb) * 100 : 0
-                      const cpuColor = c.cpuPct > 80 ? 'text-red-400' : c.cpuPct > 50 ? 'text-amber-400' : 'text-emerald-400'
-                      const memColor = memPct > 80 ? 'text-red-400' : memPct > 60 ? 'text-amber-400' : 'text-cyan-300'
-                      return (
-                        <tr key={c.name} className="border-b border-cyan-900/10 hover:bg-white/[0.02]">
-                          <td className="px-5 py-3 font-mono text-xs text-slate-300">{c.name.replace('paas-', '')}</td>
-                          <td className="px-5 py-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-20 h-1 rounded-full bg-cyan-900/20">
-                                <div className="h-1 rounded-full bg-cyan-500/60" style={{ width: `${Math.min(c.cpuPct, 100)}%` }} />
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[380px]">
+                    <thead>
+                      <tr className="border-b border-cyan-900/20">
+                        <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">CONTAINER</th>
+                        <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">CPU %</th>
+                        <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal hidden sm:table-cell">MEMORY</th>
+                        <th className="text-left px-4 py-3 text-slate-500 text-xs font-mono font-normal">MEM %</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.containers.map(c => {
+                        const memPct = c.memLimitMb > 0 ? (c.memMb / c.memLimitMb) * 100 : 0
+                        const cpuColor = c.cpuPct > 80 ? 'text-red-400' : c.cpuPct > 50 ? 'text-amber-400' : 'text-emerald-400'
+                        const memColor = memPct > 80 ? 'text-red-400' : memPct > 60 ? 'text-amber-400' : 'text-cyan-300'
+                        return (
+                          <tr key={c.name} className="border-b border-cyan-900/10 hover:bg-white/[0.02]">
+                            <td className="px-4 py-3 font-mono text-xs text-slate-300">{c.name.replace('paas-', '')}</td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-14 h-1 rounded-full bg-cyan-900/20">
+                                  <div className="h-1 rounded-full bg-cyan-500/60" style={{ width: `${Math.min(c.cpuPct, 100)}%` }} />
+                                </div>
+                                <span className={`font-mono text-xs ${cpuColor}`}>{c.cpuPct.toFixed(1)}%</span>
                               </div>
-                              <span className={`font-mono text-xs ${cpuColor}`}>{c.cpuPct.toFixed(1)}%</span>
-                            </div>
-                          </td>
-                          <td className={`px-5 py-3 font-mono text-xs ${memColor}`}>{fmt(c.memMb)}</td>
-                          <td className={`px-5 py-3 font-mono text-xs ${memColor}`}>{memPct.toFixed(1)}%</td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+                            </td>
+                            <td className={`px-4 py-3 font-mono text-xs hidden sm:table-cell ${memColor}`}>{fmt(c.memMb)}</td>
+                            <td className={`px-4 py-3 font-mono text-xs ${memColor}`}>{memPct.toFixed(1)}%</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

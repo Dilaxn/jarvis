@@ -14,9 +14,9 @@ export default async function HomePage() {
       <Sidebar username={session.username} />
 
       {/* Main content */}
-      <main className="flex-1 ml-56 p-8">
+      <main className="flex-1 md:ml-56 pt-14 md:pt-0 p-4 md:p-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-1 h-6 bg-cyan-500 rounded-full" />
             <h1 className="text-xl font-bold text-slate-100 tracking-wide">
@@ -30,24 +30,24 @@ export default async function HomePage() {
 
         {/* System info bar */}
         <div
-          className="rounded-lg border border-cyan-900/20 px-5 py-3 mb-6 flex items-center gap-6 text-xs font-mono"
+          className="rounded-lg border border-cyan-900/20 px-4 py-3 mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono"
           style={{ background: '#0b1020' }}
         >
           <div className="flex items-center gap-2">
             <span className="text-slate-600">HOST</span>
             <span className="text-cyan-400">EC2 t4g.small</span>
           </div>
-          <div className="w-px h-4 bg-cyan-900/40" />
+          <div className="hidden sm:block w-px h-4 bg-cyan-900/40" />
           <div className="flex items-center gap-2">
             <span className="text-slate-600">PROXY</span>
             <span className="text-cyan-400">Caddy v2</span>
           </div>
-          <div className="w-px h-4 bg-cyan-900/40" />
+          <div className="hidden sm:block w-px h-4 bg-cyan-900/40" />
           <div className="flex items-center gap-2">
             <span className="text-slate-600">REGISTRY</span>
             <span className="text-cyan-400">ghcr.io</span>
           </div>
-          <div className="w-px h-4 bg-cyan-900/40" />
+          <div className="hidden sm:block w-px h-4 bg-cyan-900/40" />
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-emerald-400">ONLINE</span>
