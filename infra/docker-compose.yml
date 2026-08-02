@@ -134,6 +134,8 @@ services:
     image: ghcr.io/dilaxn/invitation:latest
     container_name: paas-invitation
     env_file: /opt/paas/env/invitation.env
+    volumes:
+      - paas_invitation_uploads:/app/public/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -208,6 +210,7 @@ volumes:
   paas_mysql_data:
   paas_postgres_data:
   paas_invitation_data:
+  paas_invitation_uploads:
   paas_pms_data:
   paas_prince_data:
   paas_webpulse_data:
