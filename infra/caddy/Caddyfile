@@ -32,11 +32,13 @@ lankanews.dilax.space {
 
 invitebloom.online, www.invitebloom.online {
 	import common
+	header X-Frame-Options "SAMEORIGIN"
 	reverse_proxy invitation:3002
 }
 
 invite.dilax.space {
 	import common
+	header X-Frame-Options "SAMEORIGIN"
 	reverse_proxy invitation:3002
 }
 
