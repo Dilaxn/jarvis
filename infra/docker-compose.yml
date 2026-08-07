@@ -195,6 +195,23 @@ services:
       timeout: 10s
       retries: 3
 
+  timebox:
+    <<: *app-defaults
+    image: ghcr.io/dilaxn/timebox:latest
+    container_name: paas-timebox
+    env_file: /opt/paas/env/timebox.env    # SESSION_SECRET, PIN (optional)
+    environment:
+      PORT: 3006
+      HOSTNAME: "0.0.0.0"
+      DATABASE_PATH: /data/timebox.db
+    volumes:
+      - paas_timebox_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3006/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 networks:
   paas:
     driver: bridge
@@ -213,4 +230,5 @@ volumes:
   paas_invitation_uploads:
   paas_pms_data:
   paas_prince_data:
+  paas_timebox_data:
   paas_webpulse_data:
