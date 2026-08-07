@@ -25,6 +25,8 @@ export async function initDb() {
     seedApplications(db)
     console.log('[JARVIS] Applications seeded')
   } else {
+    // Insert any new apps that don't exist yet
+    seedApplications(db)
     // Sync domains from env vars if set (handles re-deploys after env update)
     syncDomains(db)
   }
@@ -38,6 +40,7 @@ function syncDomains(db: ReturnType<typeof import('./db').getDb>) {
     pms:        process.env.PMS_DOMAIN,
     prince:     process.env.PRINCE_DOMAIN,
     webpulse:   process.env.WEBPULSE_DOMAIN,
+    timebox:    process.env.TIMEBOX_DOMAIN,
   }
   const update = db.prepare('UPDATE applications SET domain=? WHERE name=? AND domain!=?')
   for (const [name, domain] of Object.entries(domainMap)) {
@@ -113,6 +116,16 @@ function seedApplications(db: ReturnType<typeof import('./db').getDb>) {
       image: 'ghcr.io/dilaxn/webpulse',
       internal_port: 3005,
       health_url: 'http://webpulse:3005/health',
+    },
+    {
+      name: 'timebox',
+      display_name: 'TimeBox',
+      repo: 'Dilaxn/timebox',
+      domain: process.env.TIMEBOX_DOMAIN ?? 'timebox.dilax.space',
+      container_name: 'paas-timebox',
+      image: 'ghcr.io/dilaxn/timebox',
+      internal_port: 3006,
+      health_url: 'http://timebox:3006/',
     },
   ]
 
