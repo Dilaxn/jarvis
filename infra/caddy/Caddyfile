@@ -58,6 +58,11 @@ webpulse.dilax.space {
 # Management dashboard — no IP lock for now, protected by login only.
 # Add: @notme not remote_ip YOUR_HOME_IP/32 + respond @notme "Forbidden" 403
 # once you know your static home IP.
+timebox.dilax.space {
+	import common
+	reverse_proxy timebox:3006
+}
+
 ops.dilax.space {
 	import common
 	reverse_proxy dashboard:3000
