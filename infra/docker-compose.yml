@@ -199,13 +199,14 @@ services:
     <<: *app-defaults
     image: ghcr.io/dilaxn/timebox:latest
     container_name: paas-timebox
-    env_file: /opt/paas/env/timebox.env    # SESSION_SECRET, PIN (optional)
+    env_file: /opt/paas/env/timebox.env
     environment:
       PORT: 3006
       HOSTNAME: "0.0.0.0"
-      DATABASE_PATH: /data/timebox.db
-    volumes:
-      - paas_timebox_data:/data
+      DATABASE_URL: postgresql://jarvis:jarvis8@postgres:5432/timebox
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3006/"]
       interval: 30s
