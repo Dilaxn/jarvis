@@ -28,6 +28,9 @@ COPY --from=builder /app/public ./public
 # Schema needed for first-boot DB init
 COPY --from=builder /app/schema.sql ./
 
+# Static policy pages (served as raw HTML via API routes)
+COPY --from=builder /app/app/policies/*.html ./app/policies/
+
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
