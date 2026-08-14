@@ -63,6 +63,11 @@ timebox.dilax.space {
 	reverse_proxy timebox:3006
 }
 
+dilax.space, www.dilax.space {
+	import common
+	reverse_proxy portfolio:3007
+}
+
 raone.dilax.space {
 	import common
 	rewrite /privacy-policy /policies/raone-privacy-policy

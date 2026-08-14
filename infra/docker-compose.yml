@@ -213,6 +213,19 @@ services:
       timeout: 5s
       retries: 3
 
+  portfolio:
+    <<: *app-defaults
+    image: ghcr.io/dilaxn/portfolio:latest
+    container_name: paas-portfolio
+    environment:
+      PORT: 3007
+      HOSTNAME: "0.0.0.0"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3007/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 networks:
   paas:
     driver: bridge
