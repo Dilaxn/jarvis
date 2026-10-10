@@ -226,6 +226,42 @@ services:
       timeout: 5s
       retries: 3
 
+  jarvis:
+    <<: *app-defaults
+    image: ${JARVIS_IMAGE:-ghcr.io/dilaxn/jarvis-assistant}:${JARVIS_IMAGE_TAG:-latest}
+    container_name: paas-jarvis
+    env_file: /opt/paas/env/jarvis.env
+    environment:
+      JARVIS_PROCESS: api
+    volumes:
+      - paas_jarvis_uploads:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/healthz')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  jarvis-worker:
+    <<: *app-defaults
+    image: ${JARVIS_IMAGE:-ghcr.io/dilaxn/jarvis-assistant}:${JARVIS_IMAGE_TAG:-latest}
+    container_name: paas-jarvis-worker
+    env_file: /opt/paas/env/jarvis.env
+    environment:
+      JARVIS_PROCESS: worker
+    volumes:
+      - paas_jarvis_uploads:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "assert b'jarvis.worker' in open('/proc/1/cmdline','rb').read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 networks:
   paas:
     driver: bridge
@@ -246,3 +282,4 @@ volumes:
   paas_prince_data:
   paas_timebox_data:
   paas_webpulse_data:
+  paas_jarvis_uploads:
